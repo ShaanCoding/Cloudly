@@ -20,7 +20,7 @@ public class WoeIDJson
         return woeid;
     }
 
-    private String getLatt_long()
+    private String getLattLong()
     {
         return latt_long;
     }
