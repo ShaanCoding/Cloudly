@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
-public class JsonStructure {
+public class JsonStructure
+{
     ArrayList <ConsolidatedWeather> consolidated_weather = new ArrayList<ConsolidatedWeather>();
     private String time;
     private String sun_rise;
@@ -16,90 +17,59 @@ public class JsonStructure {
 
 
     // Getter Methods
-
-    public String getTime() {
+    public String getTime()
+    {
         return time;
     }
 
-    public String getSun_rise() {
+    public String getSunRise()
+    {
         return sun_rise;
     }
 
-    public String getSun_set() {
+    public String getSunSet()
+    {
         return sun_set;
     }
 
-    public String getTimezone_name() {
+    public String getTimezoneName()
+    {
         return timezone_name;
     }
 
-    public Parent getParent() {
+    public Parent getParent()
+    {
         return ParentObject;
     }
 
-    public String getTitle() {
+    public String getTitle()
+    {
         return title;
     }
 
-    public String getLocation_type() {
+    public String getLocation_type()
+    {
         return location_type;
     }
 
-    public float getWoeid() {
+    public float getWoeid()
+    {
         return woeid;
     }
 
-    public String getLatt_long() {
+    public String getLattLong()
+    {
         return latt_long;
     }
 
-    public String getTimezone() {
+    public String getTimezone()
+    {
         return timezone;
     }
-
-    // Setter Methods
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setSun_rise(String sun_rise) {
-        this.sun_rise = sun_rise;
-    }
-
-    public void setSun_set(String sun_set) {
-        this.sun_set = sun_set;
-    }
-
-    public void setTimezone_name(String timezone_name) {
-        this.timezone_name = timezone_name;
-    }
-
-    public void setParent(Parent parentObject) {
-        this.ParentObject = parentObject;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setLocation_type(String location_type) {
-        this.location_type = location_type;
-    }
-
-    public void setWoeid(float woeid) {
-        this.woeid = woeid;
-    }
-
-    public void setLatt_long(String latt_long) {
-        this.latt_long = latt_long;
-    }
-
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
 }
-public class Parent {
+
+class Parent
+{
     private String title;
     private String location_type;
     private float woeid;
@@ -108,37 +78,23 @@ public class Parent {
 
     // Getter Methods
 
-    public String getTitle() {
+    public String getTitle()
+    {
         return title;
     }
 
-    public String getLocation_type() {
+    public String getLocationType()
+    {
         return location_type;
     }
 
-    public float getWoeid() {
+    public float getWoeid()
+    {
         return woeid;
     }
 
-    public String getLatt_long() {
+    public String getLattLong()
+    {
         return latt_long;
-    }
-
-    // Setter Methods
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setLocation_type(String location_type) {
-        this.location_type = location_type;
-    }
-
-    public void setWoeid(float woeid) {
-        this.woeid = woeid;
-    }
-
-    public void setLatt_long(String latt_long) {
-        this.latt_long = latt_long;
     }
 }

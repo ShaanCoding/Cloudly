@@ -18,7 +18,7 @@ public class Program
     {
         System.out.println("Welcome to the weather app, please enter your desired location");
         String location = System.console().readLine();
-
+        return 1105779;
     }
 
     public static void getWeather(int woeID)
@@ -26,7 +26,7 @@ public class Program
         try
         {
             //add forward slash yyyy/mm/dd to WOeID to get next day
-            URL metaWeatherURL = new URL(String.format("https://www.metaweather.com/api/location/{0}/", woeID));
+            URL metaWeatherURL = new URL(String.format("https://www.metaweather.com/api/location/%s/", woeID));
             InputStreamReader reader = new InputStreamReader(metaWeatherURL.openStream());
             JsonStructure data = new Gson().fromJson(reader, JsonStructure.class);
 
