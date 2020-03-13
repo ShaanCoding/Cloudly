@@ -26,42 +26,29 @@ public class Program implements ActionListener
     private static int dayCycle = 0;
     private static String[][] sevenDayData = new String[7][8];
 
-    private JLabel dayLabel = new JLabel();
-    private JLabel locationLabel = new JLabel();
+    //Graphics functions
+    private JLabel dayLabel = new JLabel("Day: 1");
+    private JLabel locationLabel = new JLabel("Location: ");
+    private JLabel weatherStateLabel = new JLabel("Weather: ");
+    private JLabel currentTempLabel = new JLabel("Current Temp: ");
+    private JLabel minTempLabel = new JLabel("Min Temp: ");
+    private JLabel maxTempLabel = new JLabel("Max Temp: ");
+    private JLabel windSpeedLabel = new JLabel("Wind Speed: ");
+    private JLabel visibilityLabel = new JLabel("Visibility: ");
+    private JLabel airPressureLabel = new JLabel("Air Pressure: ");
+    private JLabel humidityLabel = new JLabel("Humidity: ");
 
-    private JLabel weatherStateLabel = new JLabel();
-    private JLabel currentTempLabel = new JLabel();
-    private JLabel minTempLabel = new JLabel();
-    private JLabel maxTempLabel = new JLabel();
-    private JLabel windSpeedLabel = new JLabel();
-    private JLabel visibilityLabel = new JLabel();
-    private JLabel airPressureLabel = new JLabel();
-    private JLabel humidityLabel = new JLabel();
-
-    JTextField locationTextBox = new JTextField();
-    JButton confirmLocationButton = new JButton("Confirm");
-    JButton cycleDayButton = new JButton("Next Day");
-
+    private JTextField locationTextBox = new JTextField();
+    private JButton confirmLocationButton = new JButton("Confirm");
+    private JButton cycleDayButton = new JButton("Next Day");
     private JFrame frame = new JFrame();
 
-    public Program()
+    private Program()
     {
         // the panel with the button and text
         JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
         panel.setLayout(new GridLayout(0, 1));
-
-        //Gives day 1 info to menu
-        dayLabel.setText("Day: 1");
-        locationLabel.setText("Location:");
-        weatherStateLabel.setText("Weather: ");
-        currentTempLabel.setText("Current Temp: ");
-        minTempLabel.setText("Min Temp: ");
-        maxTempLabel.setText("Max Temp: ");
-        windSpeedLabel.setText("Wind Speed: ");
-        visibilityLabel.setText("Visibility: ");
-        airPressureLabel.setText("Air Pressure: ");
-        humidityLabel.setText("Humidity: ");
 
         // clickable button
         confirmLocationButton.addActionListener(this);
@@ -96,6 +83,11 @@ public class Program implements ActionListener
         new Program();
     }
 
+    public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+    }
+
     // process the button clicks
     public void actionPerformed(ActionEvent e)
     {
@@ -121,7 +113,7 @@ public class Program implements ActionListener
         }
     }
 
-    public void updateLabels()
+    private void updateLabels()
     {
         dayLabel.setText("Day: " + (dayCycle + 1));
         locationLabel.setText("Location: " + location);
@@ -135,7 +127,7 @@ public class Program implements ActionListener
         humidityLabel.setText("Humidity: " + sevenDayData[dayCycle][7]);
     }
 
-    public static String[][] sevenDaysWeather()
+    private static String[][] sevenDaysWeather()
     {
         //Day then data
         String[][] returnWeather = new String[7][8];
@@ -144,11 +136,19 @@ public class Program implements ActionListener
         {
             woeID = getWoeID();
 
-            for(int i = 0; i < 7; i++)
+            if(woeID != 0)
             {
-                returnWeather[i] = getWeather(woeID, getAddedDate(i));
+                for(int i = 0; i < 7; i++)
+                {
+                    returnWeather[i] = getWeather(woeID, getAddedDate(i));
+                }
+                return returnWeather;
             }
-            return returnWeather;
+            else
+            {
+                location = "";
+                return null;
+            }
         }
         catch(Exception ex)
         {
@@ -170,7 +170,7 @@ public class Program implements ActionListener
         }
         catch(Exception ex)
         {
-            System.out.println(ex.toString());
+            infoBox("Could not find location, please try again.", "Error:");
             return 0;
         }
     }
@@ -213,6 +213,7 @@ public class Program implements ActionListener
         }
         catch(Exception ex)
         {
+            infoBox("An error has occurred, please try again", "Error:");
             return null;
         }
     }
