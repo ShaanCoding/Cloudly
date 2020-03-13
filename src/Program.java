@@ -38,6 +38,10 @@ public class Program implements ActionListener
     private JLabel airPressureLabel = new JLabel();
     private JLabel humidityLabel = new JLabel();
 
+    JTextField locationTextBox = new JTextField();
+    JButton confirmLocationButton = new JButton("Confirm");
+    JButton cycleDayButton = new JButton("Next Day");
+
     private JFrame frame = new JFrame();
 
     public Program()
@@ -49,21 +53,23 @@ public class Program implements ActionListener
 
         //Gives day 1 info to menu
         dayLabel.setText("Day: 1");
-        locationLabel.setText("Location:" + location);
-        weatherStateLabel.setText("Weather: " + sevenDayData[0][0]);
-        currentTempLabel.setText("Current Temp: " + sevenDayData[0][1]);
-        minTempLabel.setText("Min Temp: " + sevenDayData[0][2]);
-        maxTempLabel.setText("Max Temp: " + sevenDayData[0][3]);
-        windSpeedLabel.setText("Wind Speed: " + sevenDayData[0][4]);
-        visibilityLabel.setText("Visibility: " + sevenDayData[0][5]);
-        airPressureLabel.setText("Air Pressure: " + sevenDayData[0][6]);
-        humidityLabel.setText("Humidity: " + sevenDayData[0][7]);
+        locationLabel.setText("Location:");
+        weatherStateLabel.setText("Weather: ");
+        currentTempLabel.setText("Current Temp: ");
+        minTempLabel.setText("Min Temp: ");
+        maxTempLabel.setText("Max Temp: ");
+        windSpeedLabel.setText("Wind Speed: ");
+        visibilityLabel.setText("Visibility: ");
+        airPressureLabel.setText("Air Pressure: ");
+        humidityLabel.setText("Humidity: ");
 
         // clickable button
-        JButton cycleDayButton = new JButton("Next Day");
+        confirmLocationButton.addActionListener(this);
         cycleDayButton.addActionListener(this);
 
         //Adds stuff to panel
+        panel.add(locationTextBox);
+        panel.add(confirmLocationButton);
         panel.add(dayLabel);
         panel.add(locationLabel);
         panel.add(weatherStateLabel);
@@ -87,30 +93,38 @@ public class Program implements ActionListener
 
     public static void main(String[] args)
     {
-        sevenDayData = sevenDaysWeather();
         new Program();
     }
 
     // process the button clicks
     public void actionPerformed(ActionEvent e)
     {
-        //Put button actions in
-        if(dayCycle < 6)
+        if(e.getSource() == cycleDayButton)
         {
-            dayCycle++;
-        }
-        else
-        {
-            dayCycle = 0;
-        }
+            //Put button actions in
+            if(dayCycle < 6)
+            {
+                dayCycle++;
+            }
+            else
+            {
+                dayCycle = 0;
+            }
 
-        updateLabels();
+            updateLabels();
+        }
+        else if(e.getSource() == confirmLocationButton)
+        {
+            location = locationTextBox.getText();
+            locationTextBox.setText("");
+            sevenDayData = sevenDaysWeather();
+        }
     }
 
     public void updateLabels()
     {
         dayLabel.setText("Day: " + (dayCycle + 1));
-        locationLabel.setText("Location:" + location);
+        locationLabel.setText("Location: " + location);
         weatherStateLabel.setText("Weather: " + sevenDayData[dayCycle][0]);
         currentTempLabel.setText("Current Temp: " + sevenDayData[dayCycle][1]);
         minTempLabel.setText("Min Temp: " + sevenDayData[dayCycle][2]);
@@ -125,13 +139,12 @@ public class Program implements ActionListener
     {
         //Day then data
         String[][] returnWeather = new String[7][8];
-        long woeID = 1105779; //remove later
-        location = "Sydney"; //REMOVE
+        long woeID;
         try
         {
-            // temp commented out woeID = getWoeID();
+            woeID = getWoeID();
 
-            for(int i=0; i < 7; i++)
+            for(int i = 0; i < 7; i++)
             {
                 returnWeather[i] = getWeather(woeID, getAddedDate(i));
             }
@@ -146,12 +159,6 @@ public class Program implements ActionListener
 
     private static long getWoeID()
     {
-        System.out.println("Welcome to the weather app, please enter your desired location");
-
-        //User input
-        Scanner in = new Scanner(System.in);
-        location = in.nextLine();
-
         //add forward slash yyyy/mm/dd to WOeID to get next day
         try
         {
