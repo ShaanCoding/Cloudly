@@ -6,12 +6,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Program
 {
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
     public static void main(String[] args)
     {
-        getWeather(1105779);
+        getWeather(1105779, getAddedDate(0));
+    }
+
+    public static String getAddedDate(int i)
+    {
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, i);
+        Date addedDate = calendar.getTime();
+        return dateFormat.format(addedDate);
     }
 
     public static int getWoeID()
@@ -21,15 +38,22 @@ public class Program
         return 1105779;
     }
 
-    public static void getWeather(int woeID)
+    public static void getWeather(int woeID, String dateString)
     {
         try
         {
             //add forward slash yyyy/mm/dd to WOeID to get next day
-            URL metaWeatherURL = new URL(String.format("https://www.metaweather.com/api/location/%s/", woeID));
+            URL metaWeatherURL = new URL(String.format("https://www.metaweather.com/api/location/%1$s/%2$s", woeID, dateString));
             InputStreamReader reader = new InputStreamReader(metaWeatherURL.openStream());
-            JsonStructure data = new Gson().fromJson(reader, JsonStructure.class);
 
+            //Update jsonstructure
+            ConsolidatedWeather[] data = new Gson().fromJson(reader, ConsolidatedWeather[].class);
+
+            for(int i = 0; i < data.length; i++)
+            {
+                System.out.println(data[i].getTheTemp());
+            }
+            /*
             //data.consolidated_weather.get(0).
             for(int i = 0; i < data.consolidated_weather.size(); i++)
             {
@@ -43,6 +67,8 @@ public class Program
 
             }
             System.out.println();
+
+             */
         }
         catch(Exception ex)
         {
