@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Program
 {
@@ -18,10 +19,40 @@ public class Program
 
     public static void main(String[] args)
     {
-        getWeather(1105779, getAddedDate(0));
+        long woeID;
+        woeID = getWoeID();
+
+        for(int i=0; i < 7; i++)
+        {
+            getWeather(woeID, getAddedDate(i));
+        }
     }
 
-    public static String getAddedDate(int i)
+    private static long getWoeID()
+    {
+        System.out.println("Welcome to the weather app, please enter your desired location");
+
+        //User input
+        Scanner in = new Scanner(System.in);
+        String location = in.nextLine();
+
+        //add forward slash yyyy/mm/dd to WOeID to get next day
+        try
+        {
+            URL findWOEIDURL = new URL(String.format("https://www.metaweather.com/api/location/search/?query=%s", location));
+            InputStreamReader reader = new InputStreamReader(findWOEIDURL.openStream());
+            WoeIDJson[] data = new Gson().fromJson(reader, WoeIDJson[].class);
+
+            return data[0].getWoeID();
+        }
+        catch(Exception ex)
+        {
+            System.out.println(ex.toString());
+            return 0;
+        }
+    }
+
+    private static String getAddedDate(int i)
     {
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -31,14 +62,7 @@ public class Program
         return dateFormat.format(addedDate);
     }
 
-    public static int getWoeID()
-    {
-        System.out.println("Welcome to the weather app, please enter your desired location");
-        String location = System.console().readLine();
-        return 1105779;
-    }
-
-    public static void getWeather(int woeID, String dateString)
+    private static void getWeather(long woeID, String dateString)
     {
         try
         {
@@ -46,34 +70,26 @@ public class Program
             URL metaWeatherURL = new URL(String.format("https://www.metaweather.com/api/location/%1$s/%2$s", woeID, dateString));
             InputStreamReader reader = new InputStreamReader(metaWeatherURL.openStream());
 
-            //Update jsonstructure
+            //Json structure updated
             ConsolidatedWeather[] data = new Gson().fromJson(reader, ConsolidatedWeather[].class);
 
+            //Prints out each source per day
             for(int i = 0; i < data.length; i++)
             {
-                System.out.println(data[i].getTheTemp());
+                System.out.println("\n\n-==== Source: " + i + " ====-");
+                System.out.println("The weather today is: " + data[i].getWeatherStateName());
+                System.out.println("The temperature today is:" + data[i].getTheTemp() + " with a low of: " + data[i].getMinTemp() + " and a max of: " + data[i].getMaxTemp());
+                System.out.println("The wind speed is: " + data[i].getWindSpeed() + " km/h");
+                System.out.println("The visibility is: " + data[i].getVisibility() + " km");
+                System.out.println("The air pressure is: " + data[i].getAirPressure() + "millibar (mb)");
+                System.out.println("The humidity is: " + data[i].getHumidity() + "%");
             }
-            /*
-            //data.consolidated_weather.get(0).
-            for(int i = 0; i < data.consolidated_weather.size(); i++)
-            {
-                System.out.println("\n\n-==== Day: " + i + " ====-");
-                System.out.println("The weather today is: " + data.consolidated_weather.get(i).getWeatherStateName());
-                System.out.println("The temperature today is:" + data.consolidated_weather.get(i).getTheTemp() + " with a low of: " + data.consolidated_weather.get(i).getMinTemp() + " and a max of: " + data.consolidated_weather.get(i).getMaxTemp());
-                System.out.println("The wind speed is: " + data.consolidated_weather.get(i).getWindSpeed() + " km/h");
-                System.out.println("The visibility is: " + data.consolidated_weather.get(i).getVisibility() + " km");
-                System.out.println("The air pressure is: " + data.consolidated_weather.get(i).getAirPressure() + "millibar (mb)");
-                System.out.println("The humidity is: " + data.consolidated_weather.get(i).getHumidity() + "%");
 
-            }
             System.out.println();
-
-             */
         }
         catch(Exception ex)
         {
             System.out.println(ex.toString());
         }
-
     }
 }
