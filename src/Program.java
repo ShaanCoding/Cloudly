@@ -7,26 +7,141 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
-public class Program
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Program implements ActionListener
 {
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.##");
+    private static String location = "";
+    private static int dayCycle = 0;
+    private static String[][] sevenDayData = new String[7][8];
+
+    private JLabel dayLabel = new JLabel();
+    private JLabel locationLabel = new JLabel();
+
+    private JLabel weatherStateLabel = new JLabel();
+    private JLabel currentTempLabel = new JLabel();
+    private JLabel minTempLabel = new JLabel();
+    private JLabel maxTempLabel = new JLabel();
+    private JLabel windSpeedLabel = new JLabel();
+    private JLabel visibilityLabel = new JLabel();
+    private JLabel airPressureLabel = new JLabel();
+    private JLabel humidityLabel = new JLabel();
+
+    private JFrame frame = new JFrame();
+
+    public Program()
+    {
+        // the panel with the button and text
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
+        panel.setLayout(new GridLayout(0, 1));
+
+        //Gives day 1 info to menu
+        dayLabel.setText("Day: 1");
+        locationLabel.setText("Location:" + location);
+        weatherStateLabel.setText("Weather: " + sevenDayData[0][0]);
+        currentTempLabel.setText("Current Temp: " + sevenDayData[0][1]);
+        minTempLabel.setText("Min Temp: " + sevenDayData[0][2]);
+        maxTempLabel.setText("Max Temp: " + sevenDayData[0][3]);
+        windSpeedLabel.setText("Wind Speed: " + sevenDayData[0][4]);
+        visibilityLabel.setText("Visibility: " + sevenDayData[0][5]);
+        airPressureLabel.setText("Air Pressure: " + sevenDayData[0][6]);
+        humidityLabel.setText("Humidity: " + sevenDayData[0][7]);
+
+        // clickable button
+        JButton cycleDayButton = new JButton("Next Day");
+        cycleDayButton.addActionListener(this);
+
+        //Adds stuff to panel
+        panel.add(dayLabel);
+        panel.add(locationLabel);
+        panel.add(weatherStateLabel);
+        panel.add(currentTempLabel);
+        panel.add(minTempLabel);
+        panel.add(maxTempLabel);
+        panel.add(windSpeedLabel);
+        panel.add(visibilityLabel);
+        panel.add(airPressureLabel);
+        panel.add(humidityLabel);
+        panel.add(cycleDayButton);
+
+
+        // set up the frame and display it
+        frame.add(panel, BorderLayout.CENTER);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("Cloudly");
+        frame.pack();
+        frame.setVisible(true);
+    }
 
     public static void main(String[] args)
     {
-        long woeID;
-        woeID = getWoeID();
+        sevenDayData = sevenDaysWeather();
+        new Program();
+    }
 
-        for(int i=0; i < 7; i++)
+    // process the button clicks
+    public void actionPerformed(ActionEvent e)
+    {
+        //Put button actions in
+        if(dayCycle < 6)
         {
-            System.out.println("\n\n -== DAY: " + (i + 1) + " ==-");
-            getWeather(woeID, getAddedDate(i));
+            dayCycle++;
         }
+        else
+        {
+            dayCycle = 0;
+        }
+
+        updateLabels();
+    }
+
+    public void updateLabels()
+    {
+        dayLabel.setText("Day: " + (dayCycle + 1));
+        locationLabel.setText("Location:" + location);
+        weatherStateLabel.setText("Weather: " + sevenDayData[dayCycle][0]);
+        currentTempLabel.setText("Current Temp: " + sevenDayData[dayCycle][1]);
+        minTempLabel.setText("Min Temp: " + sevenDayData[dayCycle][2]);
+        maxTempLabel.setText("Max Temp: " + sevenDayData[dayCycle][3]);
+        windSpeedLabel.setText("Wind Speed: " + sevenDayData[dayCycle][4]);
+        visibilityLabel.setText("Visibility: " + sevenDayData[dayCycle][5]);
+        airPressureLabel.setText("Air Pressure: " + sevenDayData[dayCycle][6]);
+        humidityLabel.setText("Humidity: " + sevenDayData[dayCycle][7]);
+    }
+
+    public static String[][] sevenDaysWeather()
+    {
+        //Day then data
+        String[][] returnWeather = new String[7][8];
+        long woeID = 1105779; //remove later
+        location = "Sydney"; //REMOVE
+        try
+        {
+            // temp commented out woeID = getWoeID();
+
+            for(int i=0; i < 7; i++)
+            {
+                returnWeather[i] = getWeather(woeID, getAddedDate(i));
+            }
+            return returnWeather;
+        }
+        catch(Exception ex)
+        {
+            return null;
+        }
+
     }
 
     private static long getWoeID()
@@ -35,7 +150,7 @@ public class Program
 
         //User input
         Scanner in = new Scanner(System.in);
-        String location = in.nextLine();
+        location = in.nextLine();
 
         //add forward slash yyyy/mm/dd to WOeID to get next day
         try
@@ -63,8 +178,9 @@ public class Program
         return dateFormat.format(addedDate);
     }
 
-    private static void getWeather(long woeID, String dateString)
+    private static String[] getWeather(long woeID, String dateString)
     {
+        String[] returnString = new String[8];
         try
         {
             //add forward slash yyyy/mm/dd to WOeID to get next day
@@ -77,20 +193,20 @@ public class Program
             //Prints out each source per day
             if(data.length > 0)
             {
-                System.out.println("\n\n-==== Source: " + 0 + " ====-");
-                System.out.println("The weather today is: " + data[0].getWeatherStateName());
-                System.out.println("The temperature today is:" + data[0].getTheTemp() + " with a low of: " + data[0].getMinTemp() + " and a max of: " + data[0].getMaxTemp());
-                System.out.println("The wind speed is: " + data[0].getWindSpeed() + " km/h");
-                System.out.println("The visibility is: " + data[0].getVisibility() + " km");
-                System.out.println("The air pressure is: " + data[0].getAirPressure() + "millibar (mb)");
-                System.out.println("The humidity is: " + data[0].getHumidity() + "%");
+                returnString[0] = data[0].getWeatherStateName();
+                returnString[1] = String.valueOf(decimalFormat.format(data[0].getTheTemp()));
+                returnString[2] = String.valueOf(decimalFormat.format(data[0].getMinTemp()));
+                returnString[3] = String.valueOf(decimalFormat.format(data[0].getMaxTemp()));
+                returnString[4] = String.valueOf(decimalFormat.format(data[0].getWindSpeed()));
+                returnString[5] = String.valueOf(decimalFormat.format(data[0].getVisibility()));
+                returnString[6] = String.valueOf(decimalFormat.format(data[0].getAirPressure()));
+                returnString[7] = String.valueOf(decimalFormat.format(data[0].getHumidity()));
             }
-
-            System.out.println();
+            return returnString;
         }
         catch(Exception ex)
         {
-            System.out.println(ex.toString());
+            return null;
         }
     }
 }
