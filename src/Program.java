@@ -24,6 +24,7 @@ public class Program
 
         for(int i=0; i < 7; i++)
         {
+            System.out.println("\n\n -== DAY: " + (i + 1) + " ==-");
             getWeather(woeID, getAddedDate(i));
         }
     }
@@ -74,15 +75,15 @@ public class Program
             ConsolidatedWeather[] data = new Gson().fromJson(reader, ConsolidatedWeather[].class);
 
             //Prints out each source per day
-            for(int i = 0; i < data.length; i++)
+            if(data.length > 0)
             {
-                System.out.println("\n\n-==== Source: " + i + " ====-");
-                System.out.println("The weather today is: " + data[i].getWeatherStateName());
-                System.out.println("The temperature today is:" + data[i].getTheTemp() + " with a low of: " + data[i].getMinTemp() + " and a max of: " + data[i].getMaxTemp());
-                System.out.println("The wind speed is: " + data[i].getWindSpeed() + " km/h");
-                System.out.println("The visibility is: " + data[i].getVisibility() + " km");
-                System.out.println("The air pressure is: " + data[i].getAirPressure() + "millibar (mb)");
-                System.out.println("The humidity is: " + data[i].getHumidity() + "%");
+                System.out.println("\n\n-==== Source: " + 0 + " ====-");
+                System.out.println("The weather today is: " + data[0].getWeatherStateName());
+                System.out.println("The temperature today is:" + data[0].getTheTemp() + " with a low of: " + data[0].getMinTemp() + " and a max of: " + data[0].getMaxTemp());
+                System.out.println("The wind speed is: " + data[0].getWindSpeed() + " km/h");
+                System.out.println("The visibility is: " + data[0].getVisibility() + " km");
+                System.out.println("The air pressure is: " + data[0].getAirPressure() + "millibar (mb)");
+                System.out.println("The humidity is: " + data[0].getHumidity() + "%");
             }
 
             System.out.println();
